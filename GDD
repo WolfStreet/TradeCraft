@@ -1,0 +1,405 @@
+Game Design Document (GDD) – Trade Craft Online
+1. Game Overview
+TradeCraft Online is a browser-based MMO business and trading simulation set in a persistent, shared virtual world. Players join as one of several economic roles and participate in a real-time, interdependent player-driven economy. The core of the game revolves around production, logistics, services, lending, and market dynamics. The game is designed to be low-graphics but rich in systems and strategy.
+Genre:
+Business Simulation, Strategy MMO
+Platform:
+Browser-based (desktop and mobile supported)
+
+
+Technology Stack:
+Backend: Go (modular microservice architecture)
+
+
+Database: MongoDB (document store for player, world, transaction data)
+
+
+Real-Time: WebSockets using github.com/coder/websocket
+
+
+Frontend: To be finalized based on UI needs (React/Svelte preferred)
+
+
+
+2. Player Roles
+Players choose a role when joining the game. Each role has defined abilities and restrictions, designed to encourage economic interdependence.
+2.1 Banker
+Starting Assets: High monetary capital
+
+
+Abilities:
+
+
+Provide loans to other players
+
+
+Set custom interest rates and terms
+
+
+Repossess assets on default (future feature)
+
+
+Restrictions: Cannot produce or trade goods, cannot offer services
+
+
+Progression: Expand to create banks, consortiums, and offer bonds or derivatives
+
+
+2.2 Service Provider
+Starting Assets: Steady income from basic job (e.g., mechanic, clerk)
+
+
+Abilities:
+
+
+Provide essential and luxury services
+
+
+Gain experience (XP) and reputation through services to unlock raises and promotions. Higher levels make services more effective and profitable. Managing jobs unlock at higher XP tiers.
+
+
+Restrictions: Cannot produce goods
+
+
+Progression: Specialize in high-demand service sectors, form service chains
+
+
+2.3 Entrepreneur
+Starting Assets: Server loan + one basic factory
+
+
+Abilities:
+
+
+Produce one or more product types (food, cement, clothes, etc.)
+
+
+Expand and optimize production facilities
+
+
+Opens facilities like hospitals and repair centers as they are transitioned from server-operated services.
+
+
+Can eventually take over electricity, health, and security services from the server as the player economy matures.
+
+
+Restrictions: Can sell only to dealers (not end-users)
+
+
+Progression: Unlock tech for advanced manufacturing, run production empires
+
+
+2.4 Dealer
+Starting Assets: Access to market interface and storage
+
+
+Abilities:
+
+
+Buy from entrepreneurs, sell to services or simulated end-user market
+
+
+Monitor regional demands and price fluctuations
+
+
+Restrictions: Cannot produce goods
+
+
+Progression: Form regional distribution networks, influence prices, run trading guilds
+
+
+2.5 Transporter
+Starting Assets: One vehicle and a fuel quota
+
+
+Abilities:
+
+
+Deliver goods between regions and players
+
+
+Upgrade fleet, optimize routes, reduce risks
+
+
+Restrictions: Cannot produce or trade
+
+
+Progression: Operate transport hubs, provide third-party logistics services
+
+
+2.6 Security Service (Future/Optional Role)
+Function:
+
+
+Initially operated by the server to ensure essential transport risk mitigation and baseline gameplay support.
+
+
+As the server population and player economy grow, these services will be gradually outsourced to entrepreneurs.
+
+
+Offer paid protection for transports
+
+
+Reduce risk of hijack/theft
+
+
+Provide insurance services, either as NPC policies or player-managed
+
+
+Adds opportunities for entrepreneurial growth and specialized roles in private security
+
+
+
+3. World Structure
+The game world is persistent and shared across all players. It is divided hierarchically:
+3.1 Regions and Sub-Regions
+Players are randomly placed in a sub-region upon joining
+
+
+Sub-regions have independent markets, resources, and local conditions
+
+
+Cross-region trade is encouraged for profit and demand balancing
+
+
+3.2 Region Properties
+Resource availability
+
+
+Demand index for each product
+
+
+Risk level (crime rate, economic stability)
+
+
+3.3 Player Placement
+Players are auto-assigned to sub-regions to balance load and market variety
+
+
+
+4. Resources and Products
+4.1 Core Resources
+Money: Universal currency, used for all transactions
+
+
+Products: Tradable commodities with unique uses and lifespans
+
+
+4.2 Product Types
+Product
+Category
+Use
+Shelf Life
+Food
+Perishable
+Essential daily commodity
+Short (1-2 days)
+Clothes
+Perishable
+Essential, slower consumption
+Medium (1-2 weeks)
+Wood
+Construction
+Used for building houses, hotels, etc.
+Long
+Metal
+Construction
+Used for machinery, structures
+Long
+Cement
+Construction
+Used for buildings, large projects
+Medium
+Fuel
+Utility
+Powers factories, transport
+Consumable
+
+4.3 Derived/Advanced Products (Future Expansions)
+Electricity
+
+
+Machinery
+
+
+Tools
+
+
+High-tech equipment (electronic goods, software)
+
+
+
+5. Core Gameplay Mechanics
+Server-to-Player Service Transition
+In the early stages of a new server or region, essential services (e.g., health, electricity, security) are handled by the server to ensure basic functionality.
+
+
+As player population and economy grow, these services are gradually transitioned to eligible Entrepreneurs.
+
+
+Transition is triggered by server milestones like population density, XP thresholds, or demand index.
+
+
+Entrepreneurs meeting certain criteria (XP level, reputation, infrastructure) will receive opportunities to bid or apply to take over the services.
+
+
+Once transitioned, these services become part of the regular economic flow and player-managed operations.
+
+
+5.1 Tick-Based Simulation
+The game updates on a fixed tick interval (e.g., every 5 minutes)
+
+
+All time-bound actions (production, transport, lending) are queued
+
+
+Tasks continue while players are offline
+
+
+5.2 Queued Action System
+Players can queue multiple tasks: deliveries, production, loans, etc.
+
+
+Queues are role-specific and influenced by player upgrades (e.g., automation)
+
+
+5.3 Dynamic Economy
+Region-based supply and demand models
+
+
+Prices auto-adjust based on availability and player transactions
+
+
+Essential goods (e.g., food) have constant baseline demand
+
+
+Scarcity events (e.g., fuel crisis) shift player strategies
+
+
+5.4 Transport & Risk
+Transporters deliver goods across distances, with time and risk factors
+
+
+Hijack, delays, and spoilage can affect delivery success
+
+
+Security services can reduce risk
+
+
+5.5 Market Operations
+Centralized regional markets for bidding and offers
+
+
+Price graphs and trade history available to dealers
+
+
+Auctions, standing buy/sell orders, and direct player contracts
+
+
+5.6 Reputation System
+Each player has a reputation score (global + regional)
+
+
+Impacts loan eligibility, faction invites, and trade priority
+
+
+Grows via successful deals, timely deliveries, and loan repayment
+
+
+Drops with defaults, delivery failures, or manipulation
+
+
+5.7 Factions and Associations
+Players can create or join factions (multi-tiered)
+
+
+Factions enable:
+
+
+Internal trading at lower taxes
+
+
+Shared logistics and resources
+
+
+Political and market influence (in future expansions)
+
+
+5.8 Role Switching
+Free role switch on new servers
+
+
+Within-server switch allowed under:
+
+
+Failure scenarios (e.g., entrepreneur bankruptcy)
+
+
+Paid service or in-game token
+
+
+Some global stats (e.g., net worth, reputation) persist across roles
+
+
+5.9 Player Progression
+Role-specific growth (e.g., factory upgrades, fleet size)
+
+
+Unlock advanced production tiers or service offerings
+
+
+Leaderboards based on:
+
+
+Wealth
+
+
+Trade volume
+
+
+Reputation
+
+
+Faction success
+
+
+5.10 Monetization (Future)
+Role change tokens
+
+
+Faster task queues (non-pay-to-win)
+
+
+Customization (badges, banners, avatars)
+
+
+Advanced analytics dashboards for market trends
+
+
+5.11 Win Conditions (Optional in future)
+Dominance in a product category or region
+
+
+Faction monopoly on trade or transport
+
+
+Seasonal economic tournament-style servers
+
+
+
+Next Steps
+Go backend module design
+
+
+MongoDB schema planning
+
+
+WebSocket event model
+
+
+Frontend structure recommendation (React/Svelte, dynamic dashboards)
+
+
+End of Part 1. Backend breakdown to follow.
+
+
